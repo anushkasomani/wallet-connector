@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "workshop_backend": {
+      "main": "src/workshop_backend/main.mo",
+      "type": "motoko"
+    },
+    "workshop_frontend": {
+      "dependencies": [
+        "workshop_backend"
+      ],
+      "source": [
+        "src/workshop_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "workshop_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
