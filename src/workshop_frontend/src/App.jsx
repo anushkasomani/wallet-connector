@@ -1,30 +1,49 @@
-import { useState } from 'react';
-import { workshop_backend } from 'declarations/workshop_backend';
+import React, { useState } from 'react';
+import './App.css';
 
 function App() {
-  const [greeting, setGreeting] = useState('');
+  const [account, setAccount] = useState('');
+  const [balance, setBalance] = useState('');
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    workshop_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
+  
+  const connectWallet = async () => {
+    if (window.ethereum) {
+      try {
+        
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setAccount(accounts[0]);
+        
+        
+        const balanceInWei = await window.ethereum.request({
+          method: 'eth_getBalance',
+          params: [accounts[0], 'latest']
+        });
+
+        
+        const balanceInEth = window.web3.utils.fromWei(balanceInWei, 'ether');
+        setBalance(balanceInEth);
+      } catch (error) {
+        console.error("Error connecting to MetaMask", error);
+      }
+    } else {
+      alert('MetaMask not detected. Please install MetaMask!');
+    }
+  };
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+    <div className="App">
+      <h1>Blockchain Wallet Connector</h1>
+      <button onClick={connectWallet} className="btn-connect">
+        {account ? 'Wallet Connected' : 'Connect Wallet'}
+      </button>
+      
+      {account && (
+        <div className="account-info">
+          <p><strong>Account:</strong> {account}</p>
+          <p><strong>Balance:</strong> {balance} ETH</p>
+        </div>
+      )}
+    </div>
   );
 }
 
